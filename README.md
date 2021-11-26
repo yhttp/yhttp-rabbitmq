@@ -24,11 +24,44 @@ from yhttp.ext.rabbitmq import install as rabbitmq_install
 
 app = Application()
 rabbitmq_install(app)
-app.settings.merge(f'''
+app.settings.merge('''
 rabbitmq:
-
+  host: localhost
+  port: 5672
+  virtualhost: /
+  user: guest
+  password: guest
+  channel_max: 10
+  connection_attempts: 3
+  
+  ssl:
+    ca_certfile:  <ca_cert>
+    certfile: <client_cert>
+    keyfile: <client_key>
+    commonname: <CN>
+ 
+  pool:
+    maxsize: 10
+    maxoverflow: 10
+    timeout: 10
+    recycle: 3600
+    stale: 45
 ''')
-
-# TODO: example
 app.ready()
-```
+
+
+@app.route()
+def get(req):
+    with app.rabbitmq.acquire() as cxn:
+        cxn.channel.basic_publish(
+            body='banana',
+            exchange='',
+            routing_key='fruits',
+            properties=pika.BasicProperties(
+                content_type='text/plain',
+                content_encoding='utf-8',
+                delivery_mode=2,
+            )
+        )
+
+app.ready()

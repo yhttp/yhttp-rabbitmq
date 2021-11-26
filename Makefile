@@ -37,3 +37,7 @@ bdist:
 
 .PHONY: dist
 dist: sdist bdist
+
+.PHONY: clean
+clean::
+	rm -rf dist/*

@@ -28,7 +28,7 @@ setup(
     author='Vahid Mardani',
     author_email='vahid.mardani@gmail.com',
     url='http://github.com/yhttp/yhttp-rabbitmq',
-    description='A very micro http framework.',
+    description='RabbitMQ extension for yhttp.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',  # This is important!
     install_requires=dependencies,
