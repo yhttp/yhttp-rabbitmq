@@ -18,8 +18,7 @@ with open(
 
 dependencies = [
     'yhttp >= 3.4.5',
-    'pika',
-    'pika-pool',
+    'pika >= 1.2',
 ]
 
 
