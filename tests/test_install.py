@@ -1,6 +1,5 @@
-from bddrest import status, response, when
-import yhttp
-
+import pika
+from bddrest import status
 from yhttp.ext.rabbitmq import install
 
 
@@ -12,7 +11,7 @@ def test_rabbitmq_install(app, Given, redis):
 
     @app.route()
     def get(req):
-        with pool.acquire() as cxn:
+        with app.rabbitmq.acquire() as cxn:
             cxn.channel.basic_publish(
                 body='banana',
                 exchange='',

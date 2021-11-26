@@ -1,16 +1,15 @@
 import ssl
-import functools
 
 import pika
 import pika_pool
 
 
 BUILTIN_SETTINGS = '''
-host:
-port:
+host: localhost
+port: 5672
 virtualhost: /
-user:
-password:
+user: guest
+password: guest
 channel_max: 10
 connection_attempts: 3
 
@@ -37,9 +36,11 @@ pool:
 
 def create_connectionpool(settings):
     # SSL
-    context = ssl.create_default_context(cafile=settings.ssl.ca_certfile)
-    context.load_cert_chain(settings.ssl.certfile, settings.ssl.keyfile)
-    ssl_options = pika.SSLOptions(context, settings.ssl.commonname)
+    ssl_options = None
+    if settings.ssl.ca_certfile:
+        context = ssl.create_default_context(cafile=settings.ssl.ca_certfile)
+        context.load_cert_chain(settings.ssl.certfile, settings.ssl.keyfile)
+        ssl_options = pika.SSLOptions(context, settings.ssl.commonname)
 
     # Authentication
     credentials = pika.PlainCredentials(settings.user, settings.password)
@@ -50,7 +51,7 @@ def create_connectionpool(settings):
         port=settings.port,
         virtual_host=settings.virtualhost,
         credentials=credentials,
-        ssl_options=ssl_options
+        ssl_options=ssl_options,
         channel_max=settings.channel_max,
         connection_attempts=settings.connection_attempts,
     )
@@ -62,7 +63,7 @@ def create_connectionpool(settings):
         max_overflow=settings.pool.maxoverflow,
         timeout=settings.pool.timeout,
         recycle=settings.pool.recycle,
-        stale=settings.pool.scale,
+        stale=settings.pool.stale,
     )
     return pool
 
@@ -74,6 +75,3 @@ def install(app):
     @app.when
     def ready(app):
         app.rabbitmq = create_connectionpool(app.settings.rabbitmq)
-
-
-

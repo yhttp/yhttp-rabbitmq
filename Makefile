@@ -1,6 +1,6 @@
 PIP = pip
 TEST_DIR = tests
-PRJ = yhttp.ext.pika
+PRJ = yhttp.ext.rabbitmq
 PYTEST_FLAGS = -v
 
 
