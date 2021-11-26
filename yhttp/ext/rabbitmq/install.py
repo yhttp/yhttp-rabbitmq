@@ -1,7 +1,7 @@
 import ssl
 
 import pika
-import pika_pool
+from . import connpool
 
 
 BUILTIN_SETTINGS = '''
@@ -57,7 +57,7 @@ def create_connectionpool(settings):
     )
 
     # Pool
-    pool = pika_pool.QueuedPool(
+    pool = connpool.QueuedPool(
         create=lambda: pika.BlockingConnection(params),
         max_size=settings.pool.maxsize,
         max_overflow=settings.pool.maxoverflow,
